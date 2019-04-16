@@ -1,0 +1,35 @@
+#
+# Default excludes
+#
+
+# Binaries
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.war
+*.ear
+*.sar
+*.class
+
+# NetBeans specific
+/GUI/nbproject/private/
+/GUI/build/
+/GUI/nbbuild/
+/GUI/dist/
+/GUI/nbdist/
+/GUI/nbactions.xml
+/GUI/nb-configuration.xml
+
+# OS
+.DS_Store
+
+# Misc
+*.swp
+release.properties
+pom.xml.releaseBackup
+pom.xml.tag
