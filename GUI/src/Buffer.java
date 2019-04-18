@@ -6,16 +6,18 @@ import java.util.logging.Logger;
 
 public class Buffer {
     
-    private char buffer;
+    private String buffer;
+    GUIFrame frame;
     
-    Buffer() {
-        this.buffer = 0;
+    Buffer(GUIFrame frame) {
+        this.buffer = "";
+        this.frame = frame;
     }
     
-    synchronized char consume() {
-        char product = 0;
+    synchronized String consume() {
+        String product = "";
         
-        if(this.buffer == 0) {
+        if("".equals(this.buffer)) {
             try {
                 wait(2000);
             } catch (InterruptedException ex) {
@@ -23,14 +25,14 @@ public class Buffer {
             }
         }
         product = this.buffer;
-        this.buffer = 0;
+        this.buffer = "";
         notify();
         
         return product;
     }
     
-    synchronized void produce(char product) {
-        if(this.buffer != 0) {
+    synchronized void produce(String product) {
+        if(!"".equals(this.buffer)) {
             try {
                 wait(2000);
             } catch (InterruptedException ex) {
@@ -43,9 +45,7 @@ public class Buffer {
     }
     
     static int count = 1;
-    synchronized static void print(String string) {
-        System.out.print(count++ + " ");
-        System.out.println(string);
-    }
-    
+    synchronized static void addOperationsCount() {
+        System.out.println(count++);
+    }    
 }
