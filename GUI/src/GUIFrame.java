@@ -353,10 +353,14 @@ public class GUIFrame extends javax.swing.JFrame {
         resultsTable.setRowCount(0);
         int i = 0, j = 0;
         while (i < consumersNum || j < producersNum) {
-            consumerList.add(new Consumer(i+1, buffer, resultsTable, this, consumersWaitNum));
-            consumerList.get(i).start();
-            producerList.add(new Producer(j+1, buffer, tasksTable, producersWaitNum, nRange, mRange));
-            producerList.get(j).start();
+            if (i < consumersNum) {
+                consumerList.add(new Consumer(i+1, buffer, resultsTable, this, consumersWaitNum));
+                consumerList.get(i).start();
+            }
+            if (j < producersNum) {
+                producerList.add(new Producer(j+1, buffer, tasksTable, producersWaitNum, nRange, mRange));
+                producerList.get(j).start();
+            }
             i++;
             j++;
         }

@@ -30,8 +30,8 @@ public class Producer extends Thread {
         String product;
         
         while (this.buffer.isAvailable()) {
-            int operand1 = r.nextInt(this.upperBound-this.lowerBound) + this.lowerBound;
-            int operand2 = r.nextInt(this.upperBound-this.lowerBound) + this.lowerBound;
+            int operand1 = (int) (Math.random() * (this.upperBound - this.lowerBound)) + this.lowerBound;
+            int operand2 = (int) (Math.random() * (this.upperBound - this.lowerBound)) + this.lowerBound;
             product = String.format("(%s %d %d)", operands.charAt(r.nextInt(4)), operand1, operand2);
             this.buffer.produce(product);
             this.table.addRow(new Object[]{"Producer " + this.id, product});
