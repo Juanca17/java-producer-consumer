@@ -22,7 +22,7 @@ public class Buffer {
     synchronized String consume() {
         String product;
         
-        if(this.buffer.isEmpty()) {
+        while(this.buffer.isEmpty() || this.buffer.size() < this.capacity) {
             try {
                 wait(2000);
             } catch (InterruptedException ex) {
@@ -44,9 +44,9 @@ public class Buffer {
     }
     
     synchronized void produce(String product) {
-        if(this.buffer.size() >= this.capacity) {
+        while(this.buffer.size() >= this.capacity) {
             try {
-                wait(2000);
+                wait(9000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
             }

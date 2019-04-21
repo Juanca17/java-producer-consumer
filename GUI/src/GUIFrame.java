@@ -341,6 +341,8 @@ public class GUIFrame extends javax.swing.JFrame {
         int producersWaitNum = (int) this.producersWaitNum.getValue();
         int consumersWaitNum = (int) this.consumersWaitNum.getValue();
         int bufferSize = (int) this.bufferSize.getValue();
+        int nRange = (int) this.nRange.getValue();
+        int mRange = (int) this.mRange.getValue();
         this.toDoProgressBar.setMaximum(bufferSize);
         this.buffer = new Buffer(bufferSize, this);
         ArrayList<Producer> producerList = new ArrayList<>();
@@ -349,13 +351,14 @@ public class GUIFrame extends javax.swing.JFrame {
         DefaultTableModel resultsTable = (DefaultTableModel) this.resultsTable.getModel();
         tasksTable.setRowCount(0);
         resultsTable.setRowCount(0);
-        for (int i = 0; i < producersNum; i++) {
-            producerList.add(new Producer(i+1, buffer, tasksTable, producersWaitNum));
-            producerList.get(i).start();
-        }
-        for (int i = 0; i < consumersNum; i++) {
+        int i = 0, j = 0;
+        while (i < consumersNum || j < producersNum) {
             consumerList.add(new Consumer(i+1, buffer, resultsTable, this, consumersWaitNum));
             consumerList.get(i).start();
+            producerList.add(new Producer(j+1, buffer, tasksTable, producersWaitNum, nRange, mRange));
+            producerList.get(j).start();
+            i++;
+            j++;
         }
     }//GEN-LAST:event_startActionPerformed
 
@@ -381,7 +384,7 @@ public class GUIFrame extends javax.swing.JFrame {
     }
     
     public void updateCountLabel () {    
-        this.countLabel.setText(Integer.toString(this.tasksTable.getRowCount()));
+        this.countLabel.setText(Integer.toString(this.resultsTable.getRowCount()));
     }
     
     
@@ -415,7 +418,8 @@ public class GUIFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUIFrame().setVisible(true);
+               new GUIFrame().setVisible(true);
+                
             }
         });
     }

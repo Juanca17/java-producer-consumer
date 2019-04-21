@@ -11,12 +11,16 @@ public class Producer extends Thread {
     Buffer buffer;
     DefaultTableModel table;
     int waitTime;
+    int lowerBound;
+    int upperBound;
     
-    Producer(int id, Buffer buffer, DefaultTableModel table, int waitTime) {
+    Producer(int id, Buffer buffer, DefaultTableModel table, int waitTime, int lowerBound, int upperBound) {
         this.id = id;
         this.buffer = buffer;
         this.table = table;
         this.waitTime = waitTime;
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound + 1;
     }
     
     @Override
@@ -26,7 +30,9 @@ public class Producer extends Thread {
         String product;
         
         while (this.buffer.isAvailable()) {
-            product = String.format("(%s %d %d)", operands.charAt(r.nextInt(4)), r.nextInt(9), r.nextInt(9));
+            int operand1 = r.nextInt(this.upperBound-this.lowerBound) + this.lowerBound;
+            int operand2 = r.nextInt(this.upperBound-this.lowerBound) + this.lowerBound;
+            product = String.format("(%s %d %d)", operands.charAt(r.nextInt(4)), operand1, operand2);
             this.buffer.produce(product);
             this.table.addRow(new Object[]{"Producer " + this.id, product});
             
