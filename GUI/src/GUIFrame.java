@@ -1,5 +1,7 @@
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -44,7 +46,7 @@ public class GUIFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         producersWaitNum = new javax.swing.JSpinner();
         consumersWaitNum = new javax.swing.JSpinner();
-        jSpinner7 = new javax.swing.JSpinner();
+        bufferSize = new javax.swing.JSpinner();
         nRange = new javax.swing.JSpinner();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -53,13 +55,13 @@ public class GUIFrame extends javax.swing.JFrame {
         resultsTable = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        toDoProgressBar = new javax.swing.JProgressBar();
         countLabel = new javax.swing.JLabel();
+        bufferSizeLabel = new javax.swing.JLabel();
         startButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
 
         jLabel5.setText("Tiempo de Espera (ms)");
 
@@ -83,7 +85,7 @@ public class GUIFrame extends javax.swing.JFrame {
 
         consumersWaitNum.setModel(new javax.swing.SpinnerNumberModel(1000, 0, 10000, 1));
 
-        jSpinner7.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
+        bufferSize.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
 
         nRange.setModel(new javax.swing.SpinnerNumberModel(0, 0, 9, 1));
         nRange.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -109,7 +111,7 @@ public class GUIFrame extends javax.swing.JFrame {
                     .addComponent(consumersNum)
                     .addComponent(producersNum)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
-                    .addComponent(jSpinner7)
+                    .addComponent(bufferSize)
                     .addComponent(nRange))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -140,7 +142,7 @@ public class GUIFrame extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jSpinner7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
@@ -228,10 +230,11 @@ public class GUIFrame extends javax.swing.JFrame {
 
         jLabel8.setText("Tareas realizadas");
 
-        jProgressBar1.setValue(50);
-
         countLabel.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
         countLabel.setText("0");
+
+        bufferSizeLabel.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
+        bufferSizeLabel.setText("0");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -239,19 +242,22 @@ public class GUIFrame extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(toDoProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bufferSizeLabel)))
+                .addGap(31, 31, 31)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(countLabel))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 73, Short.MAX_VALUE))))
+                        .addGap(0, 60, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(countLabel))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -262,13 +268,15 @@ public class GUIFrame extends javax.swing.JFrame {
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(countLabel))
-                .addGap(21, 21, 21))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(toDoProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(bufferSizeLabel)
+                        .addComponent(countLabel)))
+                .addGap(22, 22, 22))
         );
 
         jTabbedPane1.addTab("Procesos", jPanel3);
@@ -332,26 +340,29 @@ public class GUIFrame extends javax.swing.JFrame {
         int consumersNum = (int) this.consumersNum.getValue();
         int producersWaitNum = (int) this.producersWaitNum.getValue();
         int consumersWaitNum = (int) this.consumersWaitNum.getValue();
-        Buffer buffer = new Buffer(this);
+        int bufferSize = (int) this.bufferSize.getValue();
+        this.toDoProgressBar.setMaximum(bufferSize);
+        this.buffer = new Buffer(bufferSize, this);
         ArrayList<Producer> producerList = new ArrayList<>();
         ArrayList<Consumer> consumerList = new ArrayList<>();
         DefaultTableModel tasksTable = (DefaultTableModel) this.tasksTable.getModel();
         DefaultTableModel resultsTable = (DefaultTableModel) this.resultsTable.getModel();
+        tasksTable.setRowCount(0);
+        resultsTable.setRowCount(0);
         for (int i = 0; i < producersNum; i++) {
             producerList.add(new Producer(i+1, buffer, tasksTable, producersWaitNum));
             producerList.get(i).start();
         }
         for (int i = 0; i < consumersNum; i++) {
-            consumerList.add(new Consumer(i+1, buffer, resultsTable, consumersWaitNum));
+            consumerList.add(new Consumer(i+1, buffer, resultsTable, this, consumersWaitNum));
             consumerList.get(i).start();
         }
     }//GEN-LAST:event_startActionPerformed
 
     private void stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopActionPerformed
-        //this.stopButton.setEnabled(false);
+        this.stopButton.setEnabled(false);
         this.startButton.setEnabled(true);
-        DefaultTableModel model = (DefaultTableModel) this.tasksTable.getModel();
-        model.addRow(new Object[]{"Column 1", "Column 2"});
+        this.buffer.turnOff();
     }//GEN-LAST:event_stopActionPerformed
 
     private void nRangeChange(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_nRangeChange
@@ -364,10 +375,16 @@ public class GUIFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_nRangeChange
     
-    public void setCountLabel (String count) {
-        System.out.println(this.countLabel.getText());
-        this.countLabel.setText(count);
+    public void updateToDoProgressBar (int value) {
+        this.bufferSizeLabel.setText(Integer.toString(value));
+        this.toDoProgressBar.setValue(value);
     }
+    
+    public void updateCountLabel () {    
+        this.countLabel.setText(Integer.toString(this.tasksTable.getRowCount()));
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -402,8 +419,12 @@ public class GUIFrame extends javax.swing.JFrame {
             }
         });
     }
+    
+    private Buffer buffer;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSpinner bufferSize;
+    private javax.swing.JLabel bufferSizeLabel;
     private javax.swing.JSpinner consumersNum;
     private javax.swing.JSpinner consumersWaitNum;
     private javax.swing.JLabel countLabel;
@@ -418,10 +439,8 @@ public class GUIFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSpinner jSpinner7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JSpinner mRange;
     private javax.swing.JSpinner nRange;
@@ -431,5 +450,6 @@ public class GUIFrame extends javax.swing.JFrame {
     private javax.swing.JButton startButton;
     private javax.swing.JButton stopButton;
     private javax.swing.JTable tasksTable;
+    private javax.swing.JProgressBar toDoProgressBar;
     // End of variables declaration//GEN-END:variables
 }

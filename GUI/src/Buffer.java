@@ -1,51 +1,77 @@
 
 
 
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Buffer {
     
-    private String buffer;
+    private final Stack<String> buffer;
+    private int capacity;
+    private boolean available;
     GUIFrame frame;
     
-    Buffer(GUIFrame frame) {
-        this.buffer = "";
+    Buffer(int capacity, GUIFrame frame) {
+        this.buffer = new Stack<>();
+        this.capacity = capacity;
+        this.available = true;
         this.frame = frame;
     }
     
     synchronized String consume() {
-        String product = "";
+        String product;
         
-        if("".equals(this.buffer)) {
+        if(this.buffer.isEmpty()) {
             try {
                 wait(2000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        product = this.buffer;
-        this.buffer = "";
+        product = this.buffer.pop();
+        
+        try {
+                this.frame.updateToDoProgressBar(this.buffer.size());
+                wait(50);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
         notify();
         
         return product;
     }
     
     synchronized void produce(String product) {
-        if(!"".equals(this.buffer)) {
+        if(this.buffer.size() >= this.capacity) {
             try {
                 wait(2000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        this.buffer = product;
+        this.buffer.push(product);
+        
+        try {
+                this.frame.updateToDoProgressBar(this.buffer.size());
+                wait(50);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         
         notify();
     }
     
-    static int count = 1;
-    synchronized static void addOperationsCount() {
-        System.out.println(count++);
-    }    
+    public int getBufferSize () {
+        return this.buffer.size();
+    }
+    
+    public boolean isAvailable () {
+        return this.available;
+    }
+    
+    public void turnOff () {
+        this.available = false;
+    }
 }

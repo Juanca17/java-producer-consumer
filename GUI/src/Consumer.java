@@ -9,33 +9,26 @@ public class Consumer extends Thread {
     int id;
     Buffer buffer;
     DefaultTableModel table;
+    GUIFrame frame;
     int waitTime;
     
-    Consumer(int id, Buffer buffer, DefaultTableModel table) {
+    Consumer(int id, Buffer buffer, DefaultTableModel table, GUIFrame frame, int waitTime) {
         this.id = id;
         this.buffer = buffer;
         this.table = table;
-        this.waitTime = 1000;
-    }
-    
-    Consumer(int id, Buffer buffer, DefaultTableModel table, int waitTime) {
-        this.id = id;
-        this.buffer = buffer;
-        this.table = table;
+        this.frame = frame;
         this.waitTime = waitTime;
     }
     
     @Override
     public void run() {
-        System.out.println("Running Consumer...");
         String product;
         
-        for(int i=0 ; i<5 ; i++) {
+        while (this.buffer.isAvailable()) {
             product = this.buffer.consume();
             this.table.addRow(new Object[]{"Consumer " + this.id, product, calculate(product)});
-            Buffer.addOperationsCount();
-            // Buffer.print("Consumer " + this.id + " consumed: " + calculate(product));
-            
+            this.frame.updateCountLabel();
+                        
             try {
                 Thread.sleep(this.waitTime);
             } catch (InterruptedException ex) {
